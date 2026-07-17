@@ -44,11 +44,11 @@
         .form-input.error { border-color: var(--danger); }
         .form-row { display: flex; gap: 12px; } .form-row .form-group { flex: 1; }
         .address-header { display: flex; gap: 6px; margin-bottom: 6px; font-size: 10px; color: var(--text2); text-transform: uppercase; }
-        .address-header span { display: block; } .address-header .h-id { width: 80px; } .address-header .h-addr { flex: 2; } .address-header .h-contact { flex: 1; } .address-header .h-phone { flex: 1; } .address-header .h-vol { width: 70px; } .address-header .h-del { width: 30px; }
+        .address-header span { display: block; } .address-header .h-seq { width: 40px; } .address-header .h-id { width: 80px; } .address-header .h-addr { flex: 2; } .address-header .h-contact { flex: 1; } .address-header .h-phone { flex: 1; } .address-header .h-vol { width: 70px; } .address-header .h-del { width: 30px; }
         .address-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
         .address-row input { padding: 5px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; outline: none; }
         .address-row input:focus { border-color: var(--primary); }
-        .address-row .addr-id { width: 80px; } .address-row .addr-address { flex: 2; } .address-row .addr-contact { flex: 1; } .address-row .addr-phone { flex: 1; } .address-row .addr-vol { width: 70px; } .address-row .addr-del { width: 30px; text-align: center; }
+        .address-row .addr-seq { width: 40px; } .address-row .addr-id { width: 80px; } .address-row .addr-address { flex: 2; } .address-row .addr-contact { flex: 1; } .address-row .addr-phone { flex: 1; } .address-row .addr-vol { width: 70px; } .address-row .addr-del { width: 30px; text-align: center; }
         .empty { text-align: center; padding: 40px; color: var(--text2); }
         .toast { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 13px; z-index: 30; cursor: pointer; }
         .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f1f3; font-size: 12px; }
@@ -125,9 +125,9 @@
             <div class="form-row"><div class="form-group"><label class="form-label">Ставка за рейс (₽) *</label><input type="number" class="form-input" x-model="formTrip.rate"></div><div class="form-group" x-show="formTrip.type === 'Междугородний'"><label class="form-label">Маршрут</label><select class="form-select" x-model="formTrip.route"><option value="">—</option><template x-for="r in routes" :key="r.name"><option :value="r.name" x-text="r.name + ' (' + r.distance + ' км)'"></option></template></select></div><div class="form-group" x-show="formTrip.type === 'Городской'"><label class="form-label">Город</label><input type="text" class="form-input" x-model="formTrip.city"></div></div>
             <div class="form-group"><label class="form-label">Пробег план (км)</label><input type="number" class="form-input" x-model="formTrip.plan_km"></div>
             <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:8px;"><label class="form-label">Адреса доставки *</label>
-                <div class="address-header"><span class="h-id">ID заказа *</span><span class="h-addr">Адрес *</span><span class="h-contact">Контакт</span><span class="h-phone">Телефон</span><span class="h-vol">м³</span><span class="h-del"></span></div>
-                <template x-for="(addr, i) in formTrip.addresses" :key="i"><div class="address-row"><input type="text" class="addr-id" x-model="addr.id"><input type="text" class="addr-address" x-model="addr.address"><input type="text" class="addr-contact" x-model="addr.contact"><input type="text" class="addr-phone" x-model="addr.phone" x-mask="+7 (999) 999-99-99"><input type="number" class="addr-vol" x-model="addr.volume"><button class="btn btn-secondary btn-sm addr-del" @click="formTrip.addresses.splice(i,1)" style="color:var(--danger);">✕</button></div></template>
-                <button class="btn btn-secondary btn-sm" @click="formTrip.addresses.push({id:'',address:'',contact:'',phone:'',volume:''})">+ Добавить адрес</button>
+                <div class="address-header"><span class="h-seq">№</span><span class="h-id">ID заказа *</span><span class="h-addr">Адрес *</span><span class="h-contact">Контакт</span><span class="h-phone">Телефон</span><span class="h-vol">м³</span><span class="h-del"></span></div>
+                <template x-for="(addr, i) in formTrip.addresses" :key="i"><div class="address-row"><input type="number" class="addr-seq" x-model="addr.sequence" placeholder="1" min="1"><input type="text" class="addr-id" x-model="addr.id"><input type="text" class="addr-address" x-model="addr.address"><input type="text" class="addr-contact" x-model="addr.contact"><input type="text" class="addr-phone" x-model="addr.phone" x-mask="+7 (999) 999-99-99"><input type="number" class="addr-vol" x-model="addr.volume"><button class="btn btn-secondary btn-sm addr-del" @click="formTrip.addresses.splice(i,1)" style="color:var(--danger);">✕</button></div></template>
+                <button class="btn btn-secondary btn-sm" @click="formTrip.addresses.push({sequence: formTrip.addresses.length + 1, id:'', address:'', contact:'', phone:'', volume:''})">+ Добавить адрес</button>
             </div>
             <button class="btn btn-primary" style="margin-top:12px;width:100%;" @click="addTrip()" :disabled="saving"><span x-show="!saving">Добавить рейс</span><span x-show="saving">Сохранение...</span></button>
         </div></div>
@@ -138,7 +138,7 @@
             <div class="modal-title" x-text="'Рейс ' + detailTrip?.id"></div>
             <template x-if="detailTrip">
                 <div>
-                    <div class="detail-row"><span class="detail-label">Дата</span><input type="date" class="detail-value" x-model="detailTrip.date" @change="saveDetailDate()"></div>
+                    <div class="detail-row"><span class="detail-label">Дата</span><input type="date" class="detail-value" x-model="detailTrip.date" @change="saveDetailField('date')"></div>
                     <div class="detail-row"><span class="detail-label">Тип</span><span class="detail-value" x-text="detailTrip.type"></span></div>
                     
                     <!-- МАШИНА -->
@@ -161,8 +161,7 @@
                         </div>
                     </div>
                     
-                    <!-- ОБЪЁМ -->
-                    <div class="detail-row"><span class="detail-label">Объём (м³)</span><input type="number" class="detail-value" x-model="detailTrip.vehicle_volume" @change="saveDetailChange()"></div>
+                    <div class="detail-row"><span class="detail-label">Объём (м³)</span><input type="number" class="detail-value" x-model="detailTrip.vehicle_volume" @change="saveDetailField('vehicle_volume')"></div>
                     
                     <!-- ВОДИТЕЛЬ -->
                     <div class="detail-row">
@@ -184,8 +183,8 @@
                         </div>
                     </div>
                     
-                    <div class="detail-row"><span class="detail-label">Ставка (₽)</span><input type="number" class="detail-value" x-model="detailTrip.rate" @change="saveDetailChange()"></div>
-                    <div class="detail-row"><span class="detail-label">Пробег план</span><input type="number" class="detail-value" x-model="detailTrip.plan_km" @change="saveDetailChange()"></div>
+                    <div class="detail-row"><span class="detail-label">Ставка (₽)</span><input type="number" class="detail-value" x-model="detailTrip.rate" @change="saveDetailField('rate')"></div>
+                    <div class="detail-row"><span class="detail-label">Пробег план</span><input type="number" class="detail-value" x-model="detailTrip.plan_km" @change="saveDetailField('plan_km')"></div>
                     <div class="detail-row"><span class="detail-label">Загрузка</span><span class="detail-value" x-text="loadPercent(detailTrip) + '% (' + (detailTrip.load_volume || '0') + 'м³ / ' + (detailTrip.vehicle_volume || '?') + 'м³)'"></span></div>
                     <div class="detail-row"><span class="detail-label">Статус</span>
                         <select class="detail-value" x-model="detailTrip.status" @change="updateTripStatus(detailTrip.id, detailTrip.status)" style="width:200px;">
@@ -195,8 +194,9 @@
                     
                     <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;">
                         <div class="form-label" style="margin-bottom:8px;">Адреса доставки</div>
-                        <template x-for="(o, i) in ordersByTrip(detailTrip.id)" :key="o.id">
+                        <template x-for="(o, i) in ordersByTrip(detailTrip.id).sort((a,b) => (a.sequence||99) - (b.sequence||99))" :key="o.id">
                             <div class="address-row">
+                                <span class="addr-seq" style="font-size:11px;" x-text="o.sequence || '—'"></span>
                                 <span class="addr-id" style="font-size:11px;" x-text="o.id"></span>
                                 <span class="addr-address" style="font-size:11px;" x-text="o.address"></span>
                                 <span class="addr-contact" style="font-size:11px;" x-text="o.contact || '—'"></span>
@@ -234,7 +234,7 @@
                 today: new Date().toLocaleDateString('ru-RU'), tripCounter: 0,
                 editing: { vehicle: false, driver: false },
                 editForm: { vehicle: '', vehicle_name: '', driver: '', driver_name: '' },
-                formTrip: { date: '', type: 'Городской', vehicle: '', vehicle_name: '', vehicle_volume: '', driver: '', driver_name: '', rate: '', route: '', city: 'Москва', plan_km: 100, addresses: [{id:'',address:'',contact:'',phone:'',volume:''}] },
+                formTrip: { date: '', type: 'Городской', vehicle: '', vehicle_name: '', vehicle_volume: '', driver: '', driver_name: '', rate: '', route: '', city: 'Москва', plan_km: 100, addresses: [{sequence: 1, id:'', address:'', contact:'', phone:'', volume:''}] },
                 formVehicle: { plate: '', model: '', volume: '', fuel_rate: '', amort_rate: '' },
                 formDriver: { name: '', phone: '', rate: '' },
                 formRoute: { name: '', from: '', to: '', distance: '' },
@@ -258,8 +258,24 @@
                 loadColor(t) { const p = this.loadPercent(t); if (p > 100) return 'load-orange'; if (p >= 81) return 'load-green'; if (p >= 51) return 'load-yellow'; return 'load-red'; },
                 
                 showModal(type) { this.showErrors = false; this.modal = type; },
-                showTripDetail(id) { const t = this.trips.find(t => t.id === id); this.detailTrip = t ? { ...t, date: t.date || '' } : null; this.editing = { vehicle: false, driver: false }; this.modal = 'detail'; },
+                showTripDetail(id) { const t = this.trips.find(t => t.id === id); this.detailTrip = t ? { ...t } : null; this.editing = { vehicle: false, driver: false }; this.modal = 'detail'; },
                 nextTripId() { this.tripCounter++; return 'Р-' + String(this.tripCounter).padStart(3,'0'); },
+                
+                rebuildRoute(tripId) {
+                    const ords = this.ordersByTrip(tripId).sort((a,b) => (a.sequence||99) - (b.sequence||99));
+                    const addresses = ords.map(o => o.address).filter(Boolean);
+                    const trip = this.trips.find(t => t.id === tripId);
+                    const city = trip?.route?.split(':')[0] || 'Москва';
+                    return city + ': ' + addresses.join(' → ');
+                },
+                
+                async updateRoute(tripId) {
+                    const newRoute = this.rebuildRoute(tripId);
+                    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'update_trip', id: tripId, route: newRoute }) });
+                    const idx = this.trips.findIndex(t => t.id === tripId);
+                    if (idx >= 0) this.trips[idx].route = newRoute;
+                    if (this.detailTrip?.id === tripId) this.detailTrip.route = newRoute;
+                },
                 
                 editField(field) {
                     this.editing[field] = true;
@@ -304,6 +320,13 @@
                     this.toast = 'Сохранено'; setTimeout(() => this.toast = '', 2000);
                 },
                 
+                async saveDetailField(field) {
+                    if (!this.detailTrip) return;
+                    await this.saveDetailChange();
+                    const idx = this.trips.findIndex(t => t.id === this.detailTrip.id);
+                    if (idx >= 0) this.trips[idx][field] = this.detailTrip[field];
+                },
+                
                 onVehicleChange() {
                     if (this.formTrip.vehicle === '__other__') { this.formTrip.driver = '__other__'; this.formTrip.driver_name = ''; this.formTrip.rate = ''; }
                     else { const v = this.vehicles.find(x => x.plate === this.formTrip.vehicle); this.formTrip.vehicle_volume = v ? v.volume : ''; }
@@ -320,7 +343,6 @@
                         plan_km: this.detailTrip.plan_km
                     }) });
                 },
-                async saveDetailDate() { await this.saveDetailChange(); },
                 
                 async addTrip() {
                     if (!this.formTrip.date || !this.formTrip.vehicle || !this.formTrip.driver || !this.formTrip.rate) { this.showErrors = true; return; }
@@ -334,7 +356,8 @@
                     const vehicleName = this.formTrip.vehicle === '__other__' ? this.formTrip.vehicle_name : this.formTrip.vehicle;
                     const driverName = (this.formTrip.vehicle === '__other__' || this.formTrip.driver === '__other__') ? this.formTrip.driver_name : this.formTrip.driver;
                     const vehicleVolume = this.formTrip.vehicle === '__other__' ? this.formTrip.vehicle_volume : (this.vehicles.find(v => v.plate === this.formTrip.vehicle)?.volume || '');
-                    const addresses = this.formTrip.addresses.filter(a => a.address).map(a => a.address);
+                    const sorted = [...this.formTrip.addresses].sort((a,b) => (a.sequence||99) - (b.sequence||99));
+                    const addresses = sorted.filter(a => a.address).map(a => a.address);
                     const city = this.formTrip.city || 'Москва';
                     const finalRoute = this.formTrip.type === 'Городской' ? city + ': ' + addresses.join(' → ') : this.formTrip.route;
                     const totalVol = this.formTrip.addresses.reduce((a, addr) => a + (Number(addr.volume) || 0), 0);
@@ -345,18 +368,20 @@
                         plan_km: this.formTrip.plan_km, rate: this.formTrip.rate,
                         vehicle_volume: vehicleVolume, load_volume: totalVol
                     }) });
-                    for (let i = 0; i < this.formTrip.addresses.length; i++) {
-                        const a = this.formTrip.addresses[i]; if (!a.id || !a.address) continue;
+                    for (let i = 0; i < sorted.length; i++) {
+                        const a = sorted[i]; if (!a.id || !a.address) continue;
                         const phoneRaw = (a.phone || '').replace(/\D/g, '').slice(-10);
                         const existingOrder = this.orders.find(o => o.id === a.id);
                         if (existingOrder) {
                             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'move_order', id: a.id, new_trip_id: id }) });
+                            // Обновим sequence
+                            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'add_order', id: a.id, trip_id: id, address: a.address, contact: a.contact, phone: phoneRaw, volume: a.volume, sequence: i + 1, status: 'Новый' }) });
                         } else {
                             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'add_order', id: a.id, trip_id: id, address: a.address, contact: a.contact, phone: phoneRaw, volume: a.volume, sequence: i + 1, status: 'Новый' }) });
                         }
                     }
                     this.modal = null;
-                    this.formTrip = { date: '', type: 'Городской', vehicle: '', vehicle_name: '', vehicle_volume: '', driver: '', driver_name: '', rate: '', route: '', city: 'Москва', plan_km: 100, addresses: [{id:'',address:'',contact:'',phone:'',volume:''}] };
+                    this.formTrip = { date: '', type: 'Городской', vehicle: '', vehicle_name: '', vehicle_volume: '', driver: '', driver_name: '', rate: '', route: '', city: 'Москва', plan_km: 100, addresses: [{sequence: 1, id:'', address:'', contact:'', phone:'', volume:''}] };
                     this.saving = false; await this.loadData();
                 },
                 
@@ -377,7 +402,10 @@
                 async deleteOrder(id) {
                     await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete_order', id }) });
                     await this.loadData();
-                    if (this.detailTrip) this.detailTrip = this.trips.find(t => t.id === this.detailTrip.id);
+                    if (this.detailTrip) {
+                        this.detailTrip = this.trips.find(t => t.id === this.detailTrip.id);
+                        await this.updateRoute(this.detailTrip.id);
+                    }
                 },
                 
                 async addOrderToTrip(tripId) {
@@ -389,9 +417,12 @@
                         const oldTripId = orderStatus.trip_id;
                         const msg = oldTripId ? `Заказ ${id} сейчас в рейсе ${oldTripId}. Перенести в текущий рейс?` : `Заказ ${id} существует. Добавить в рейс?`;
                         if (!confirm(msg)) return;
+                        const seq = this.ordersByTrip(tripId).length + 1;
                         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'move_order', id, new_trip_id: tripId }) });
+                        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'add_order', id, trip_id: tripId, address: orderStatus.address, contact: orderStatus.contact, phone: orderStatus.phone, volume: orderStatus.volume, sequence: seq, status: 'Новый' }) });
                         await this.loadData();
                         if (this.detailTrip) this.detailTrip = this.trips.find(t => t.id === tripId);
+                        await this.updateRoute(tripId);
                         this.toast = 'Заказ ' + id + ' перенесён'; setTimeout(() => this.toast = '', 2000);
                         return;
                     }
@@ -405,6 +436,7 @@
                     await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'add_order', id, trip_id: tripId, address, contact, phone: phoneRaw, volume, sequence: seq, status: 'Новый' }) });
                     await this.loadData();
                     if (this.detailTrip) this.detailTrip = this.trips.find(t => t.id === tripId);
+                    await this.updateRoute(tripId);
                 },
                 
                 async addVehicle() { this.saving = true; await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'add_vehicle', plate: this.formVehicle.plate, model: this.formVehicle.model, volume: this.formVehicle.volume, fuel_rate: this.formVehicle.fuel_rate, amort_rate: this.formVehicle.amort_rate }) }); this.modal = null; this.formVehicle = { plate: '', model: '', volume: '', fuel_rate: '', amort_rate: '' }; this.saving = false; await this.loadData(); },
