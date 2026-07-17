@@ -145,7 +145,7 @@
                 async init() { await this.loadData(); },
                 async loadData() {
                     this.loading = true;
-                    try { const r = await fetch(SCRIPT_URL + '?type=all&_cb=' + Date.now()); const d = await r.json(); this.trips = d.trips || []; this.orders = d.orders || []; this.drivers = d.drivers || []; this.vehicles = d.vehicles || []; this.routes = d.routes || []; this.costs = d.costs || []; this.tripCounter = this.trips.length; this.toast = 'Данные обновлены'; setTimeout(() => this.toast = '', 2000); } catch(e) { console.error(e); }
+                    try { const r = await fetch(SCRIPT_URL + '?type=all&_cb=' + Date.now()); const d = await r.json(); this.trips = (d.trips || []).map(t => ({ ...t, date: t.date ? new Date(t.date).toLocaleDateString('ru-RU') : '' })); this.orders = d.orders || []; this.drivers = d.drivers || []; this.vehicles = d.vehicles || []; this.routes = d.routes || []; this.costs = d.costs || []; this.tripCounter = this.trips.length; this.toast = 'Данные обновлены'; setTimeout(() => this.toast = '', 2000); } catch(e) { console.error(e); }
                     this.loading = false;
                 },
                 tripsByStatus(s) { return this.trips.filter(t => t.status === s); },
