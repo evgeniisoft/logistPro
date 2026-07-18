@@ -199,7 +199,7 @@
     
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz62R4Rv7y_ai7hzmYiy4qPPdSfzV3arSh3i2hW0YeWXbqjimJeBf27bhBTPp8zj9nveg/exec';
-        function fmtMoney(val) { if (!val) return ''; const num = Number(val); if (Math.abs(num) >= 1e6) return (num/1e6).toFixed(1) + ' млн ₽'; if (Math.abs(num) >= 1e3) return (num/1e3).toFixed(0) + ' тыс ₽'; return num.toLocaleString('ru-RU') + ' ₽'; }
+        function fmtMoney(val) { if (!val) return ''; const num = Number(val); if (Math.abs(num) >= 1e6) return (num / 1e6).toFixed(1) + ' млн ₽'; return num.toLocaleString('ru-RU') + ' ₽'; }
         
         function app() {
             return {
