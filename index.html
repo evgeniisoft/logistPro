@@ -119,7 +119,7 @@
             <button class="tab" :class="tab === 'board' ? 'active' : ''" @click="tab = 'board'">📋 Доска рейсов</button>
             <button class="tab" :class="tab === 'reports' ? 'active' : ''" @click="tab = 'reports'">📊 Отчёты</button>
             <button class="tab" :class="tab === 'waybill' ? 'active' : ''" @click="tab = 'waybill'">🧾 Путевой лист</button>
-            <button class="tab" :class="tab === 'costs' ? 'active' : ''" @click="tab = 'costs'">⛽ Затраты</button>
+            <button class="tab" :class="tab === 'costs' ? 'active' : ''" @click="tab = 'costs'">📑 Затраты</button>
             <button class="tab" :class="tab === 'refs' ? 'active' : ''" @click="tab = 'refs'" x-show="canEditRefs">📚 Справочники</button>
         </div>
 
@@ -150,7 +150,7 @@
                 <button class="btn btn-secondary btn-sm" @click="resetReportFilter()">Сбросить</button>
             </div>
             <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;">
-                <div style="font-weight:600;font-size:14px;margin-bottom:12px;">⚡ <span x-text="reportSummaryTitle"></span></div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:12px;">📅 <span x-text="reportSummaryTitle"></span></div>
                 <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; font-size:12px;">
                     <div><span style="color:var(--text2);">Рейсов:</span> <strong x-text="reportSummary.trips"></strong></div>
                     <div><span style="color:var(--text2);">Наёмных:</span> <strong x-text="reportSummary.hired + ' (' + reportSummary.hiredPercent + '%)'"></strong></div>
@@ -163,16 +163,16 @@
                 </div>
             </div>
             <div x-show="!reportFilter.driver && !reportFilter.vehicle" style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;">
-                <div style="font-weight:600;font-size:14px;margin-bottom:8px;">👤 Топ водителей</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:8px;"> Топ водителей</div>
                 <template x-if="reportTopDrivers.length"><div style="font-size:11px;"><template x-for="(d, i) in reportTopDrivers" :key="d.name"><div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #f0f1f3;"><span style="width:20px;color:var(--text2);" x-text="i+1"></span><span style="flex:1;" x-text="d.name"></span><div style="flex:2;height:16px;background:#e5e7eb;border-radius:3px;overflow:hidden;"><div style="height:100%;background:var(--primary);border-radius:3px;" :style="'width:' + (d.trips / reportTopDriversMax * 100) + '%'"></div></div><span style="width:70px;text-align:right;" x-text="d.trips + ' рейс.'"></span><span style="width:60px;text-align:right;color:var(--text2);" x-text="d.loadAvg + '% загр.'"></span></div></template></div></template>
                 <p x-show="!reportTopDrivers.length" style="color:var(--text2);font-size:12px;">Нет данных</p>
             </div>
             <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;">
-                <div style="font-weight:600;font-size:14px;margin-bottom:12px;">🚚 Машины — детализация</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:12px;"> Машины — детализация</div>
                 <div style="overflow-x:auto;"><table class="report-table"><thead><tr><th style="width:15%;text-align:left;">Машина</th><th style="width:10%;">Рейсов</th><th style="width:12%;">Пробег</th><th style="width:12%;">Загрузка</th><th style="width:14%;">Ремонты</th><th style="width:14%;">Затраты</th><th style="width:12%;">Затр/км</th></tr></thead><tbody><template x-for="v in reportVehiclesDetail" :key="v.vehicle"><tr :style="v.warning ? 'background:#fef3c7;' : ''"><td style="text-align:left;" x-text="v.vehicle"></td><td x-text="v.trips"></td><td x-text="v.km"></td><td :style="v.loadAvg < 50 ? 'color:var(--danger);font-weight:600;' : ''" x-text="v.loadAvg + '%'"></td><td :style="v.repair > 20000 ? 'color:var(--danger);font-weight:600;' : ''" x-text="v.repair ? fmtMoney(v.repair) : '—'"></td><td style="font-weight:500;" x-text="fmtMoney(v.costs)"></td><td :style="v.costPerKm > 40 ? 'color:var(--danger);font-weight:600;' : ''" x-text="v.costPerKm + ' ₽'"></td></tr></template></tbody></table></div>
             </div>
             <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;">
-                <div style="font-weight:600;font-size:14px;margin-bottom:12px;">📋 Рейсы за период</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:12px;"> Рейсы за период</div>
                 <div style="overflow-x:auto;"><table class="report-table"><thead><tr><th style="width:12%;text-align:left;cursor:pointer;" @click="reportSortBy = 'id'; reportSortDir = reportSortDir * -1">Рейс ↕</th><th style="width:12%;text-align:left;cursor:pointer;" @click="reportSortBy = 'date'; reportSortDir = reportSortDir * -1">Дата ↕</th><th style="width:16%;text-align:left;">Машина</th><th style="width:16%;text-align:left;">Водитель</th><th style="width:11%;">Загрузка</th><th style="width:13%;">Затраты</th><th style="width:10%;">Пробег</th><th style="width:10%;">Затр/км</th></tr></thead><tbody><template x-for="r in reportTripsTable" :key="r.id"><tr style="cursor:pointer;" @click="showTripDetail(r.id); tab='board'" :style="r.hired ? 'background:#fffbeb;' : ''"><td style="text-align:left;color:var(--primary);" x-text="r.id"></td><td style="text-align:left;" x-text="r.date"></td><td style="text-align:left;" x-text="r.vehicle"></td><td style="text-align:left;" x-text="r.driver"></td><td :style="r.loadPercent < 50 ? 'color:var(--danger);' : ''" x-text="r.loadPercent + '%'"></td><td x-text="fmtMoney(r.costs)"></td><td x-text="r.km"></td><td :style="r.costPerKm > 40 ? 'color:var(--danger);' : ''" x-text="r.costPerKm + ' ₽'"></td></tr></template><tr style="font-weight:700;border-top:2px solid var(--border);background:#fafbfc;" x-show="reportTripsTable.length"><td colspan="4" style="text-align:left;">ИТОГО: <span x-text="reportTripsTable.length"></span> рейсов</td><td></td><td x-text="fmtMoney(reportTripsTableTotal)"></td><td></td><td></td></tr></tbody></table></div>
             </div>
         </div>
