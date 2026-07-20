@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рабочее место логиста</title>
+    <title>ЛогистПро v1.2</title>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -94,7 +94,8 @@
 
     <div class="modal-overlay" x-show="!authorized" style="z-index:100;">
         <div style="background:var(--white);border-radius:8px;padding:32px;width:360px;box-shadow:0 4px 20px rgba(0,0,0,.15);">
-            <div style="text-align:center;font-size:18px;font-weight:600;margin-bottom:20px;">🚚 Вход в систему</div>
+            <div style="text-align:center;font-size:18px;font-weight:600;margin-bottom:4px;">ЛогистПро v1.2</div>
+            <div style="text-align:center;font-size:13px;color:var(--text2);margin-bottom:20px;">Вход в систему</div>
             <div class="form-group"><label class="form-label">Логин</label><input type="text" class="form-input" x-model="authForm.login" @keyup.enter="doLogin()"></div>
             <div class="form-group"><label class="form-label">Пароль</label><input type="password" class="form-input" x-model="authForm.password" @keyup.enter="doLogin()"></div>
             <div x-show="authError" style="color:var(--danger);font-size:12px;margin-bottom:8px;text-align:center;" x-text="authError"></div>
@@ -103,7 +104,7 @@
     </div>
 
     <header class="header no-print" x-show="authorized">
-        <span class="header-title">🚚 Рабочее место логиста</span>
+        <span class="header-title">ЛогистПро v1.2</span>
         <div style="display: flex; gap: 8px; align-items: center;">
             <span style="font-size:11px;color:var(--text2);" x-text="currentUser.fio + ' (' + currentUser.role + ')'"></span>
             <span style="font-size: 12px; color: var(--text2);" x-text="'Сегодня: ' + today"></span>
